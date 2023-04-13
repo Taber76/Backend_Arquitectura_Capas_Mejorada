@@ -3,17 +3,16 @@ const { Strategy } = require('passport-local')
 const LocalStrategy = require('passport-local').Strategy
 
 const decodedToken = require('./googleauth')
-const { logger, loggererr } = require('../log/logger')
+const { logger } = require('../log/logger')
 
-const { users } = require('../class/userContainer')
-const { newUser } = require('../controllers/usersController')
+const { checkUserController, newUserController } = require('../controllers/usersController')
 
 
 passport.use(
   'login',
   new LocalStrategy(
     async function( username, password, done ) {
-      const validateUser = await users.checkUser (username, password)
+      const validateUser = await checkUserController (username, password)
       if ( validateUser.result ) {     
         return done( null, { username: username } )
       } else {
@@ -30,12 +29,12 @@ passport.use(
   new Strategy(
     async function ( username, password, done ) {
       const googleUser = await decodedToken( password )
-      const userInDb = await users.checkUser ( username, '' )
+      const userInDb = await checkUserController ( username, '' )
       if ( userInDb.msg != 'No existe usuario' & googleUser.email === username ) { // usuario ya cargado en base de datos       
         return done ( null, { username: username })
       } 
       if ( userInDb.msg === 'No existe usuario' & googleUser.email === username ) {
-        await users.addUser (username, password)
+        await newUserController (username, password)
         return done ( null, { username: username })
       }
       logger.info(`Usuario no valido`)
@@ -49,7 +48,7 @@ passport.use(
   'register',
   new LocalStrategy(
     async function( username, password, done ) {
-      if ( await newUser(username, password ) ) {
+      if ( await newUserController (username, password ) ) {
         return done( null, { username: username } )
       } else {
         logger.info(`No se ha podido registrar Usuario.`)

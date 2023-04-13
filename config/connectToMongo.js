@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 
 let isConected
 
-const connectToDd = async () => {
+const connectToDb = async () => {
   if(!isConected) { // Esta logica es para evitar varias conexiones simultaneas
     mongoose.set('strictQuery', true)
     await mongoose.connect(process.env.MONGOCREDENTIALSECOMMERCE,
@@ -14,9 +14,8 @@ const connectToDd = async () => {
     return
   }
 
-  console.log("Conexion existente")
   return
 }
 
-module.exports = connectToDd 
+module.exports = connectToDb 
 

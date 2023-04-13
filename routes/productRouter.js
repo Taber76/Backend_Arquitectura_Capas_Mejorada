@@ -1,9 +1,8 @@
 const { Router } = require('express')  
 const productRouter = Router() 
 
-const { products } = require('../class/productContainer')
-const { newProduct } = require('../controllers/productsController')
-const { mock5 } = require('../class/mockFaker')
+const { newProductController, getAllProductsController, getProductByIdController, delProductByIdController } = require('../controllers/productsController')
+const { mock5 } = require('../DAO/mockFaker')
 const { logger, loggererr } = require('../log/logger')
 
 
@@ -13,9 +12,9 @@ const { logger, loggererr } = require('../log/logger')
 productRouter.get(
   '/productos',
   async (req, res) => {
-    const allProducts = await products.getAll()
+    const products = await getAllProductsController()
     logger.info(`Ruta: /api${req.url}, metodo: ${req.method}`)
-    res.json( allProducts )
+    res.json( products )
   }
 )
 
@@ -25,7 +24,7 @@ productRouter.get(
   '/productos/:id',
   async (req, res) => {
     const id = Number(req.params.id)
-    const product = await products.getById( id )
+    const product = await getProductByIdController( id )
     if ( product ) {
       logger.info(`Ruta: /api${req.url}, metodo: ${req.method}`)
       res.json( product )
@@ -42,7 +41,7 @@ productRouter.post(
   '/productos/nuevo',
   async (req, res) => {
     const productToAdd = req.body
-    const loaded = await newProduct ( productToAdd )
+    const loaded = await newProductController ( productToAdd )
     if ( loaded ) {
       logger.info(`Producto agregado correctamente`)
     } else {
@@ -59,7 +58,7 @@ productRouter.put(
   async (req, res) => {
     const id = Number(req.params.id)
     const productToModify = req.body
-    if(await products.modifyById( id, productToModify )){
+    if(await modifyProductByIdController( id, productToModify )){
       logger.info(`Ruta: /api${req.url}, metodo: ${req.method}`)
       res.send({ message: 'producto modificado'})
     } else {
@@ -75,7 +74,7 @@ productRouter.delete(
   '/productos/:id',
   async (req, res) => {
     const id = req.params.id
-    if (await products.deleteById(id)) {
+    if (await delProductByIdController(id)) {
       logger.info(`Ruta: /api${req.url}, metodo: ${req.method}`)
       res.send({ message: 'producto borrado'})
     } else {

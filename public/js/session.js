@@ -1,4 +1,4 @@
-
+const socket = io.connect()
 
 async function userLogged() { //verifica si hay usuario logeeado
   let user
@@ -66,17 +66,5 @@ function logged( user ){ //ejecuta las acciones necesarias luego de logueado el 
   document.getElementById("logoutBtn").addEventListener("click", ev => {
     userLogout( user )
   })
-
-  const formulario = document.getElementById('formulario')
-  formulario.addEventListener('submit', e => {
-    e.preventDefault()
-    const producto = {
-        title: formulario[0].value,
-        price: formulario[1].value,
-        thumbnail: formulario[2].value
-    }
-    socket.emit('update', producto)
-    formulario.reset()
-})
 
 }

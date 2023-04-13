@@ -1,4 +1,4 @@
-const { products } = require('../class/productContainer')
+const { getAllProductsDto, getProductByIdDto, delProductByIdDto, addNewProductDto } = require('../DTO/productDto')
 
 
 const validateObject = ( objeto ) => { // retorna true si hay algun campo vacio
@@ -12,12 +12,28 @@ const imageUrl = ( url ) => {
 }
 
 
-const newProduct = async ( productToAdd ) => {
+const newProductController = async ( productToAdd ) => {
   if ( !validateObject( productToAdd ) & imageUrl ( productToAdd.thumbnail )) {
-    await products.add ( productToAdd )
+    await addNewProductDto ( productToAdd )
     return true
   }
   return false  
 }
 
-module.exports = { newProduct }
+const getAllProductsController = async() => {
+  const products = await getAllProductsDto()
+  return products
+}
+
+const getProductByIdController = async( id ) => {
+  const product = await getProductByIdDto( id )
+  return product
+}
+
+const delProductByIdController = async( id ) => {
+  await delProductByIdDto( id )
+  return
+}
+
+
+module.exports = { newProductController, getAllProductsController, getProductByIdController, delProductByIdController }

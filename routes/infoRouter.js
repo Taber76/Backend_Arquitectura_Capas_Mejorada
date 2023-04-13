@@ -1,9 +1,9 @@
 const { Router } = require('express')   
 const infoRouter = Router()
 
-const { infoTemplate } = require('../controllers/info')
+const { infoTemplate } = require('../api/info')
 
-const { logger, loggererr } = require('../log/logger')
+const { logger } = require('../log/logger')
 
 infoRouter.get('/', async (req, res) => {
   const tabla = infoTemplate()

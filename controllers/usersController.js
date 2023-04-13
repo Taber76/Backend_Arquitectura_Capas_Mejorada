@@ -1,4 +1,4 @@
-const { users } = require('../class/userContainer')
+const { checkUserDto, addUserDto } = require('../DTO/userDto')
 
 
 const validateEmail = ( email ) => {
@@ -7,12 +7,18 @@ const validateEmail = ( email ) => {
 }
 
 
-const newUser = async ( username, password ) => {
+const checkUserController = async( email, password ) => {
+  const checkUser = await checkUserDto( email, password )
+  return checkUser
+}
+
+
+const newUserController = async ( username, password ) => {
   if ( validateEmail( username ) & password ) {
-    await users.addUser ( username, password )
+    await addUserDto ( username, password )
     return true
   }
   return false  
 }
 
-module.exports = { newUser }
+module.exports = { checkUserController, newUserController }

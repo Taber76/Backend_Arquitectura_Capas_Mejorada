@@ -2,7 +2,7 @@ const { faker } = require('@faker-js/faker')
 faker.locate = 'es'
 
 
-class MockContainer {
+class MockDao {
 
   constructor( itemsNumber ) {
       this.itemsNumber = itemsNumber
@@ -37,6 +37,6 @@ class MockContainer {
 
 //------- Declaracion de instancias
 
-const mock5 = new MockContainer( 5 )
+const mock5 = new MockDao( 5 )
 
 module.exports = { mock5 }

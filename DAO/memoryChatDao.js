@@ -1,9 +1,9 @@
-const connectToDd = require('../config/connectToMongo')
+const connectToDb = require('../config/connectToMongo')
 const { chatModel } = require('../schemas/mongoDbModel')
 const { normalizedData } = require('../normalize/normal')
 
 
-class Container { // MongoDB
+class Dao { // MongoDB
 
   constructor( schema ) {
       this.schema = schema
@@ -12,7 +12,7 @@ class Container { // MongoDB
 
   async getAll() {
     try{
-      await connectToDd()
+      await connectToDb()
       const chatInDb = await this.schema.findOne ( { chatid: 'chat1'} )
       return normalizedData(chatInDb.chat)
     
@@ -24,7 +24,7 @@ class Container { // MongoDB
 
   async add( message ) {
     try{
-      await connectToDd()
+      await connectToDb()
       const chatInDb = await this.schema.findOne ( { chatid: 'chat1' } )
       const newMsj = chatInDb.chat
       newMsj.push({
@@ -53,7 +53,7 @@ class Container { // MongoDB
 }
 
 
-const chats = new Container ( chatModel )
+const chats = new Dao ( chatModel )
 
 
 module.exports = { chats }

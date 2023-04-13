@@ -1,4 +1,4 @@
-const connectToDd = require('../config/connectToMongo')
+const connectToDb = require('../config/connectToMongo')
 const { userModel } = require('../schemas/mongoDbModel')
 
 
@@ -6,7 +6,7 @@ const bcrypt = require('bcrypt')
 const saltRounds = 10
 
 
-class Container { // MongoDB
+class MemoryUserDao { 
 
   constructor( schema ) {
       this.schema = schema
@@ -15,7 +15,7 @@ class Container { // MongoDB
 
   async checkUser( email, password ) {
     try {
-      await connectToDd()
+      await connectToDb()
       const documentInDb = await this.schema.find({ email: email })
       if ( documentInDb.length > 0 ) {
         if ( bcrypt.compareSync( password, documentInDb[0].password ) ) {
@@ -33,11 +33,11 @@ class Container { // MongoDB
   
   async addUser( email, password ) {
     try{
-      await connectToDd()
+      await connectToDb()
       const documentInDb = await this.schema.find({ email: email })
       if ( documentInDb.length === 0 ) {
         const encriptedPassword = bcrypt.hashSync(password, saltRounds)
-        await connectToDd()
+        await connectToDb()
         const newUser = new userModel({ email: email, password: encriptedPassword })
         await newUser.save()
           .then(user => console.log(`Se ha agregado a la base de datos elemento con id: ${user._id}`))
@@ -54,6 +54,6 @@ class Container { // MongoDB
 }
 
 
-const users = new Container( userModel )
+const users = new MemoryUserDao( userModel )
 
 module.exports = { users } 

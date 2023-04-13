@@ -9,8 +9,9 @@ const config = {
 //--------------- DotEnv
 require('dotenv').config()
 const staticFiles = process.env.STATICFILES
+const persistence = process.env.PERSISTENCE
 
 
 
 //-------------- Exports
-module.exports = { config, staticFiles }
+module.exports = { config, staticFiles, persistence }

@@ -1,8 +1,8 @@
-const connectToDd = require('../config/connectToMongo')
+const connectToDb = require('../config/connectToMongo')
 const { productModel } = require('../schemas/mongoDbModel')
 
 
-class Container { // MongoDB
+class Dao { // MongoDB
 
   constructor( schema ) {
       this.schema = schema
@@ -21,7 +21,7 @@ class Container { // MongoDB
 
   async getById( id ) {
     try {
-      await connectToDd()
+      await connectToDb()
       const documentInDb = await this.schema.find({_id: id})
       return documentInDb ? documentInDb : null
 
@@ -33,7 +33,7 @@ class Container { // MongoDB
 
   async deleteById( id ) {  
     try {
-      await connectToDd()
+      await connectToDb()
       await this.schema.deleteOne({ _id: id })
       return 
     } catch(err) {
@@ -45,7 +45,7 @@ class Container { // MongoDB
 
   async deleteAll() {
     try {
-      await connectToDd()
+      await connectToDb()
       await this.schema.deleteMany()
       return 
     } catch(err) {
@@ -57,7 +57,7 @@ class Container { // MongoDB
 
   async add( item ) {
     try{
-      await connectToDd()
+      await connectToDb()
       const newProduct = new productModel( item )
       await newProduct.save()
         .then(product => console.log(`Se ha agregado a la base de datos elemento con id: ${product._id}`))
@@ -70,7 +70,7 @@ class Container { // MongoDB
 
 }
 
-const products = new Container( productModel )
+const products = new Dao( productModel )
 
 
 module.exports = { products } 
