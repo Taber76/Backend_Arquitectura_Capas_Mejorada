@@ -6,17 +6,13 @@ const bcrypt = require('bcrypt')
 const saltRounds = 10
 
 
-class MongoUserDao { // MongoDB
+class MongoUserDao { 
 
-  constructor( schema ) {
-      this.schema = schema
-  }
-  
 
   async checkUser( email, password ) {
     try {
       await connectToDb()
-      const documentInDb = await this.schema.find({ email: email })
+      const documentInDb = await userModel.find({ email: email })
       if ( documentInDb.length > 0 ) {
         if ( bcrypt.compareSync( password, documentInDb[0].password ) ) {
           return { msg: '', result: true }
@@ -34,7 +30,7 @@ class MongoUserDao { // MongoDB
   async addUser( email, password ) {
     try{
       await connectToDb()
-      const documentInDb = await this.schema.find({ email: email })
+      const documentInDb = await userModel.find({ email: email })
       if ( documentInDb.length === 0 ) {
         const encriptedPassword = bcrypt.hashSync(password, saltRounds)
         await connectToDb()
@@ -54,6 +50,4 @@ class MongoUserDao { // MongoDB
 }
 
 
-const users = new MongoUserDao( userModel )
-
-module.exports = { users } 
+module.exports = MongoUserDao 

@@ -23,8 +23,7 @@ productRouter.get(
 productRouter.get(
   '/productos/:id',
   async (req, res) => {
-    const id = Number(req.params.id)
-    const product = await getProductByIdController( id )
+    const product = await getProductByIdController( req.params.id )
     if ( product ) {
       logger.info(`Ruta: /api${req.url}, metodo: ${req.method}`)
       res.json( product )
@@ -56,9 +55,7 @@ productRouter.post(
 productRouter.put(
   '/productos/:id',
   async (req, res) => {
-    const id = Number(req.params.id)
-    const productToModify = req.body
-    if(await modifyProductByIdController( id, productToModify )){
+    if(await modifyProductByIdController( req.params.id, req.body )){
       logger.info(`Ruta: /api${req.url}, metodo: ${req.method}`)
       res.send({ message: 'producto modificado'})
     } else {

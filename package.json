@@ -1,7 +1,7 @@
 {
   "name": "arquitectura_capas_mejorada",
   "version": "1.0.0",
-  "main": "./src/main.js",
+  "main": "./server/server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon ."

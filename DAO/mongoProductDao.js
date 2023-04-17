@@ -2,13 +2,9 @@ const connectToDb = require('../config/connectToMongo')
 const { productModel } = require('../schemas/mongoDbModel')
 
 
-class MongoProductDao { // MongoDB
-/*
-  constructor( schema ) {
-      this.schema = schema
-  }
-  */
+class MongoProductDao {
 
+  
   async getAll() {
     try{
       await connectToDb()
@@ -23,6 +19,7 @@ class MongoProductDao { // MongoDB
   async getById( id ) {
     try {
       await connectToDb()
+      //const id = Number(req.params.id)
       const documentInDb = await productModel.find({_id: id})
       return documentInDb ? documentInDb : null
 
@@ -35,6 +32,7 @@ class MongoProductDao { // MongoDB
   async deleteById( id ) {  
     try {
       await connectToDb()
+      //const id = Number(req.params.id)
       await productModel.deleteOne({ _id: id })
       return 
     } catch(err) {
@@ -71,7 +69,4 @@ class MongoProductDao { // MongoDB
 
 }
 
-//const products = new MongoProductDao()
-
- module.exports = MongoProductDao
-//module.exports = { products } 
+module.exports = MongoProductDao

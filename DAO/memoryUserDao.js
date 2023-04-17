@@ -1,59 +1,40 @@
-const connectToDb = require('../config/connectToMongo')
-const { userModel } = require('../schemas/mongoDbModel')
-
-
 const bcrypt = require('bcrypt')
 const saltRounds = 10
 
 
 class MemoryUserDao { 
 
-  constructor( schema ) {
-      this.schema = schema
+  constructor( usersList ) {
+      this.usersList = usersList
   }
   
 
-  async checkUser( email, password ) {
-    try {
-      await connectToDb()
-      const documentInDb = await this.schema.find({ email: email })
-      if ( documentInDb.length > 0 ) {
-        if ( bcrypt.compareSync( password, documentInDb[0].password ) ) {
-          return { msg: '', result: true }
-        } else {
-          return { msg: 'Contrasena incorrecta', result: false }
-        }
-      } 
-      return { msg: 'No existe usuario', result: false }
-    } catch(err) {
-      console.log(`Error: ${err}`)
-    }
-  }
-
-  
-  async addUser( email, password ) {
-    try{
-      await connectToDb()
-      const documentInDb = await this.schema.find({ email: email })
-      if ( documentInDb.length === 0 ) {
-        const encriptedPassword = bcrypt.hashSync(password, saltRounds)
-        await connectToDb()
-        const newUser = new userModel({ email: email, password: encriptedPassword })
-        await newUser.save()
-          .then(user => console.log(`Se ha agregado a la base de datos elemento con id: ${user._id}`))
-          .catch(err => console.log(err))
-        return true
+  checkUser( email, password ) {
+    const user = this.usersList.find( ele => ele.email === email )
+    if ( user ) {
+      if ( bcrypt.compareSync( password, user.password ) ) {
+        return { msg: '', result: true }
       } else {
-        return false
+        return { msg: 'Contrasena incorrecta', result: false }
       }
-    } catch(err) {
-      console.log(`Error: ${err}`)
+    } 
+    return { msg: 'No existe usuario', result: false }
+  }
+
+  
+  addUser( email, password ) {
+    const user = this.usersList.find( ele => ele.email === email )
+    if ( !user ) {
+      const encriptedPassword = bcrypt.hashSync(password, saltRounds)
+      this.usersList.push({ email: email, password: encriptedPassword })
+      return true
+    } else {
+      return false
     }
   }
 
+  
 }
 
 
-const users = new MemoryUserDao( userModel )
-
-module.exports = { users } 
+module.exports = MemoryUserDao 

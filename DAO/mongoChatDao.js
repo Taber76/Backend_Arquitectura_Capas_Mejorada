@@ -1,19 +1,16 @@
 const connectToDb = require('../config/connectToMongo')
 const { chatModel } = require('../schemas/mongoDbModel')
 const { normalizedData } = require('../normalize/normal')
+const MemoryChatDao = require('./memoryChatDao')
 
 
-class Dao { // MongoDB
+class Dao { 
 
-  constructor( schema ) {
-      this.schema = schema
-  }
-  
 
   async getAll() {
     try{
       await connectToDb()
-      const chatInDb = await this.schema.findOne ( { chatid: 'chat1'} )
+      const chatInDb = await chatModel.findOne ( { chatid: 'chat1'} )
       return normalizedData(chatInDb.chat)
     
     } catch(err) {
@@ -25,7 +22,7 @@ class Dao { // MongoDB
   async add( message ) {
     try{
       await connectToDb()
-      const chatInDb = await this.schema.findOne ( { chatid: 'chat1' } )
+      const chatInDb = await chatModel.findOne ( { chatid: 'chat1' } )
       const newMsj = chatInDb.chat
       newMsj.push({
         user: { 
@@ -41,7 +38,7 @@ class Dao { // MongoDB
           text: message.text
           } 
       })
-      await this.schema.updateOne({ chatid: 'chat1' },
+      await chatModel.updateOne({ chatid: 'chat1' },
         { $set: { chat: newMsj }}
         )
       return
@@ -53,7 +50,4 @@ class Dao { // MongoDB
 }
 
 
-const chats = new Dao ( chatModel )
-
-
-module.exports = { chats }
+module.exports = MemoryChatDao

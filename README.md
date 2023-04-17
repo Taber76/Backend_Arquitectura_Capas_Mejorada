@@ -8,38 +8,20 @@ Desafio incorporar conceptos Factory, DAO y DTO
 3) El DAO seleccionado (por un parámetro en línea de comandos como lo hicimos anteriormente) será devuelto por una Factory para que la capa de negocio opere con el.
 4) Cada uno de estos casos de persistencia, deberán ser implementados usando el patrón singleton que impida crear nuevas instancias de estos mecanismos de acceso a los datos.
 5) Comprobar que si llamo a la factory dos veces, con una misma opción elegida, devuelva la misma instancia.
-6) Implementar el patrón Repository para la persistencia de productos y mensajes.
+6) Implementar el patrón Repository para la persistencia de productos y mensajes. **NO REQUERIDO PARA LA ENRTEGA**.
 
 
 ## Entrega
-
 ### Descripcion general
-Se ha dividido el proyecto en capas: server, ruteo, controlador/componentes y persistencia
+Se ha agregado la opcion de persistencia de datos en memoria mediante la variable de entorno **PERSISTENCE** (si la misma tiene el valor MEMORY la persistencia de datos sera en memoria, en otro caso la persistencia usara MongoDB).
+El funcionamiento es el que se describe a continuacion para la persistencia de datos de productos, aplica a los tres tipos de datos que se almacenan (productos, usuarios y chat).
 
-#### Server
-Se trata de un server implementado con Express que se puede ejectuar en modo 'fork' por defecto o en modo 'cluster' pasando el parametro **-m CLUSTER**, con el parametro **-p 8080** se puede indicar el puerto de escucha (en este caso 8080) y con **-a 1** se le puede indicar que para el modo cluster cada cluster escuche en un puerto distinto con numeros correlativos.
-El server tambien usa **SOCKET.IO** para la carga de productos nuevos y para los mensajes de chat
+'./DAO/factory.js' -> devuelve el objeto **getDao** que segun el valor de la variable **persistence**, en la clave 'products' contiene el objeto 'MemoryProductDao' o 'MongoProductDao'. Utiliza el patron singleton para evitar crear multiples instancias de los objetos de datos.
 
-#### Routes
-Se han implementado dos rutas princiaples: session y api.
-**Session** para recibir las solicitudes de logueo, registro y deslogueo de usuario.
-**Api** recibe solicitudes para mostrar, editar, crear y borrar productos.
+'./DAO/MemoryProductDao.js' y './DAO/MongoProductDao.js' -> definen la clase y metodos del objeto **producto** para persistencia en memoria o MongoDb respectivamente.
 
-#### Controlador / componentes
-Al tratarse de un desarrollo sencillo esta capa se ha unificado y unicamente contiene una implementacion de validacion de nuevo uauario o producto
+'./DTO/productDto.js -> recibe el objeto de persistencia suministrado y define las funciones del DTO.
 
-#### Persistencia
-Los datos son almacendados en una base de datos MongoDB, para ello se han creado clases (producto y usuario) con metodos para interactuar directamente con la base de datos.
-
-#### Ejemplo de flujo de registro de nuevo usuario
- nuevo usuario (POST frontend) --> server (src/main.js) --> router (routes/sessionRouter.js) --> sesion de usuario (middlewares/auth.js) --> validacion (controllers/userController.js) --> persistencia (class/userContainer.js)
-
-
-### Frontend
-Se ha creado un frontend sencillo para interactuar con el backend
-
-#### Login de usuario
-Con la opcion de loguearse con un usuario registrado (POST || /session/login), a traves de google loguearse o registrarse (POST || /session/logingoogle) o de registrar un nuevo usuario (POST || /session/register )
-
-### Usuario logeado 
-Cuando hay un usuario logueado se muestra en el forntend un formulario de registro de nuevo producto el cual es enviado al backend mediante SOCKET
+El resto del proceso es igual al que se venia trabajando anteriormente, por lo que las capas son las siguientes:
+**DAO || DTO || Controller || Route || Server ||| Frontend**.
+  

@@ -1,76 +1,42 @@
-const connectToDb = require('../config/connectToMongo')
-const { productModel } = require('../schemas/mongoDbModel')
+const { v4: uuidv4 } = require('uuid')
 
+class MemoryProductDao { 
 
-class Dao { // MongoDB
-
-  constructor( schema ) {
-      this.schema = schema
+  constructor( productList ) {
+      this.productList = productList
   }
   
 
-  async getAll() {
-    try{
-      const documentsInDb = await this.schema.find()
-      return documentsInDb
-    } catch(err) {
-      console.log(`Error: ${err}`)
-    }
+  getAll() {
+    return this.productList
   }
  
 
-  async getById( id ) {
-    try {
-      await connectToDb()
-      const documentInDb = await this.schema.find({_id: id})
-      return documentInDb ? documentInDb : null
-
-    } catch(err) {
-      console.log(`Error: ${err}`)
-    }
+  getById( id ) {
+    const product = this.productList.find( ele => ele.id === id )
+    return product ? product : null
   }
 
 
-  async deleteById( id ) {  
-    try {
-      await connectToDb()
-      await this.schema.deleteOne({ _id: id })
-      return 
-    } catch(err) {
-      console.log(`Error: ${err}`)
-      return false
-    }
+  deleteById( id ) {  
+    this.productList = this.productList.filter( ele => ele.id !== id )
+    return 
   }
 
 
-  async deleteAll() {
-    try {
-      await connectToDb()
-      await this.schema.deleteMany()
-      return 
-    } catch(err) {
-      console.log(`Error: ${err}`)
-      return false
-    }
+  deleteAll() {
+    this.productList = []
+    return
   }
 
 
-  async add( item ) {
-    try{
-      await connectToDb()
-      const newProduct = new productModel( item )
-      await newProduct.save()
-        .then(product => console.log(`Se ha agregado a la base de datos elemento con id: ${product._id}`))
-        .catch(err => console.log(err))
-      return
-    } catch(err) {
-      console.log(`Error: ${err}`)
-    }
+  add( item ) {
+    item.id = uuidv4()
+    this.productList.push( item )
+    return
   }
 
 }
 
-const products = new Dao( productModel )
 
-
-module.exports = { products } 
+module.exports = MemoryProductDao 
